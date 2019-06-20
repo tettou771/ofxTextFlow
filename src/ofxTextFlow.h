@@ -20,6 +20,9 @@ public:
 	static bool getSwhoing();
 	static void toggleShowing();
 
+	static void setPosition(glm::vec2 position);
+	static void setTitle(string title);
+
 private:
 	static ofxTextFlow *singleton;
 	static void singletonGenerate();
@@ -30,5 +33,8 @@ private:
 	bool initialized;
 	ofColor textColor;
 	ofMutex mutex;
+
+	glm::vec2 position;
+	string title;
 };
 

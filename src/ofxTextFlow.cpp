@@ -8,6 +8,8 @@ ofxTextFlow::ofxTextFlow() {
 	textColor.set(180);
 	maxLineNum = 30;
 
+	position = glm::vec2(0, 0);
+
 	ofAddListener(ofEvents().update, this, &ofxTextFlow::update);
 	ofAddListener(ofEvents().draw, this, &ofxTextFlow::draw);
 }
@@ -24,12 +26,25 @@ void ofxTextFlow::update(ofEventArgs & e) {
 }
 
 void ofxTextFlow::draw(ofEventArgs & e) {
-	if (showing) {
+	if (showing)
+	{
+		ofPushStyle();
+
 		float lineHeight = 14;
-		ofVec2f pos(2, ofGetHeight() + lineHeight);
+
+//		ofVec2f pos(2, ofGetHeight() + lineHeight - 5);
+
+		//-
+
+		ofVec2f pos(2 + position.x, 0 + position.y + lineHeight* (maxLineNum+1));
 
 		ofSetColor(textColor);
+		ofDrawBitmapString(title, position.x, position.y);
+
+		//-
+
 		ofPushMatrix();
+
 		ofTranslate(pos);
 		ofTranslate(0, -lineHeight * lines.size());
 
@@ -41,6 +56,8 @@ void ofxTextFlow::draw(ofEventArgs & e) {
 		mutex.unlock();
 
 		ofPopMatrix();
+
+		ofPopStyle();
 	}
 }
 
@@ -101,4 +118,14 @@ void ofxTextFlow::singletonGenerate() {
 	if (singleton == nullptr) {
 		singleton = new ofxTextFlow();
 	}
+}
+
+//-
+
+void ofxTextFlow::setPosition(glm::vec2 _position) {
+	singleton->position = _position;
+}
+
+void ofxTextFlow::setTitle(string _title) {
+	singleton->title = _title;
 }
