@@ -28,6 +28,7 @@ void ofxTextFlow::draw(ofEventArgs & e) {
 		float lineHeight = 14;
 		ofVec2f pos(2, ofGetHeight() + lineHeight);
 
+		ofPushStyle();
 		ofSetColor(textColor);
 		ofPushMatrix();
 		ofTranslate(pos);
@@ -41,6 +42,7 @@ void ofxTextFlow::draw(ofEventArgs & e) {
 		mutex.unlock();
 
 		ofPopMatrix();
+		ofPopStyle();
 	}
 }
 
