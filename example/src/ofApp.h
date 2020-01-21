@@ -11,4 +11,6 @@ class ofApp : public ofBaseApp{
 		void draw();
 
 		void keyPressed(int key);
+
+		float fontSize = 9;
 };

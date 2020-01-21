@@ -5,10 +5,12 @@ ofxTextFlow *ofxTextFlow::singleton;
 ofxTextFlow::ofxTextFlow() {
 	singleton = this;
 	showing = true;
-	textColor.set(180);
+	BBoxShowing = false;
+	textColor.set(255);
+	bgColor.set(0);
 	maxLineNum = 30;
 
-	position = glm::vec2(0, 0);
+	position = glm::vec2(10, 10);
 
 	ofAddListener(ofEvents().update, this, &ofxTextFlow::update);
 	ofAddListener(ofEvents().draw, this, &ofxTextFlow::draw);
@@ -29,34 +31,75 @@ void ofxTextFlow::draw(ofEventArgs & e) {
 	if (showing)
 	{
 		ofPushStyle();
-
-		float lineHeight = 14;
-
-//		ofVec2f pos(2, ofGetHeight() + lineHeight - 5);
-
-		//-
-
-		ofVec2f pos(2 + position.x, 0 + position.y + lineHeight* (maxLineNum+1));
-
-		ofSetColor(textColor);
-		ofDrawBitmapString(title, position.x, position.y);
-
-		//-
-
 		ofPushMatrix();
 
-		ofTranslate(pos);
-		ofTranslate(0, -lineHeight * lines.size());
+		int yPadTitle = fontSize + lineHeight;//y pad below title
+		int heightMax = fontSize + lineHeight * maxLineNum + yPadTitle;
+
+		//-
 
 		mutex.lock();
+
+		//bbox
+		if (BBoxShowing)
+		{
+			ofSetColor(bgColor);
+			ofFill();
+
+			//bbox
+			rectBB = ofRectangle(position.x, position.y, BBoxWidth, heightMax);
+			//rectBB.x -= margin;
+			//rectBB.y -= margin;
+			//rectBB.height += 2 * margin;
+			//rectBB.width += 2 * margin;
+
+			//to compensate pos after margin
+			ofPushMatrix();
+			//ofTranslate(margin, margin);
+
+			//rounded
+			if (bRounded)
+			{
+				ofDrawRectRounded(rectBB, roundedSize);
+			}
+			else
+			{
+				ofDrawRectangle(rectBB);
+			}
+
+			ofPopMatrix();
+		}
+
+		//print title
+		ofSetColor(textColor);
+		ofTranslate(position.x, position.y + fontSize);
+		ofDrawBitmapString(title, 0, 0);
+
+		//pos
+		//ofVec2f pos(2, ofGetHeight() + lineHeight + fontSize);
+				
+		ofTranslate(0, yPadTitle);
+
+		//ofVec2f pos;
+		//pos.x = position.x;
+		//pos.y = position.y + fontSize + lineHeight;//pad one line below title 
+		//reverse mode. goes to bottom
+		//pos.y = position.y + fontSize + lineHeight * maxLineNum;
+
+		//ofPushMatrix();
+		//ofTranslate(pos);
+		//ofTranslate(0, -heightTotal);
+		
+		//print lines
 		for (auto &l : lines) {
 			ofDrawBitmapString(l, 0, 0);
 			ofTranslate(0, lineHeight);
 		}
+
+
 		mutex.unlock();
 
 		ofPopMatrix();
-
 		ofPopStyle();
 	}
 }
@@ -79,19 +122,11 @@ void ofxTextFlow::addText(string txt) {
 
 }
 
+///-
+
 void ofxTextFlow::clear() {
 	singletonGenerate();
 	singleton->lines.clear();
-}
-
-void ofxTextFlow::setShowing(bool _showing) {
-	singletonGenerate();
-	singleton->showing = _showing;
-}
-
-void ofxTextFlow::setTextColor(ofColor _color) {
-	singletonGenerate();
-	singleton->textColor.set(_color);
 }
 
 void ofxTextFlow::setMaxLineNum(int _maxLineNum) {
@@ -104,7 +139,17 @@ int ofxTextFlow::getMaxLineNum() {
 	return singleton->maxLineNum;
 }
 
-bool ofxTextFlow::getSwhoing() {
+void ofxTextFlow::setShowing(bool _showing) {
+	singletonGenerate();
+	singleton->showing = _showing;
+}
+
+void ofxTextFlow::setShowingBBox(bool _showing) {
+	singletonGenerate();
+	singleton->BBoxShowing = _showing;
+}
+
+bool ofxTextFlow::getShowing() {
 	singletonGenerate();
 	return singleton->showing;
 }
@@ -120,12 +165,85 @@ void ofxTextFlow::singletonGenerate() {
 	}
 }
 
-//-
+//colors
+void ofxTextFlow::setTextColor(ofColor _color) {
+	singletonGenerate();
+	singleton->textColor.set(_color);
+}
 
-void ofxTextFlow::setPosition(glm::vec2 _position) {
-	singleton->position = _position;
+ofColor ofxTextFlow::getTextColor() {
+	singletonGenerate();
+	return singleton->textColor;
+}
+
+void ofxTextFlow::setBackgroundColor(ofColor _color) {
+	singletonGenerate();
+	singleton->bgColor = _color;
+}
+
+ofColor ofxTextFlow::getBackgroundColor() {
+	singletonGenerate();
+	return singleton->bgColor;
 }
 
 void ofxTextFlow::setTitle(string _title) {
+	singletonGenerate();
 	singleton->title = _title;
+}
+
+void ofxTextFlow::loadFont(string _path, float _size) {
+	singletonGenerate();
+	singleton->fontSize = _size;
+	singleton->font.load(_path, _size);
+}
+
+//-
+
+//layout
+
+void ofxTextFlow::setPosition(float _x, float _y) {
+	singletonGenerate();
+	singleton->position = glm::vec2(_x, _y);
+}
+
+void ofxTextFlow::setPosition(glm::vec2 _position) {
+	singletonGenerate();
+	singleton->position = _position;
+}
+
+void ofxTextFlow::setBBoxWidth(int w) {
+	singletonGenerate();
+	singleton->BBoxWidth = w;
+}
+
+void ofxTextFlow::setLineHeight(float h) {
+	singletonGenerate();
+	singleton->lineHeight = h;
+}
+
+void ofxTextFlow::setMarginBorders(int _margin) {
+	singletonGenerate();
+	singleton->margin = _margin;
+}
+
+void ofxTextFlow::setRounded(bool b, float size) {
+	singletonGenerate();
+	singleton->bRounded = b;
+	singleton->roundedSize = size;
+}
+
+void ofxTextFlow::setTabbed(bool b, int num) {
+	singletonGenerate();
+	singleton->bTabbed = b;
+	singleton->tabsNum = num;
+}
+
+void ofxTextFlow::setFloatResolution(int res) {
+	singletonGenerate();
+	singleton->fRes = res;
+}
+
+void ofxTextFlow::setShowFPS(bool _showing) {
+	singletonGenerate();
+	singleton->showFPS = _showing;
 }
