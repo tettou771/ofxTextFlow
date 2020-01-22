@@ -16,7 +16,6 @@ ofxTextFlow::ofxTextFlow() {
 	ofAddListener(ofEvents().draw, this, &ofxTextFlow::draw);
 }
 
-
 ofxTextFlow::~ofxTextFlow() {
 	singleton = nullptr;
 
@@ -33,12 +32,12 @@ void ofxTextFlow::draw(ofEventArgs & e) {
 		ofPushStyle();
 		ofPushMatrix();
 
+		mutex.lock();
+
 		int yPadTitle = fontSize + lineHeight;//y pad below title
 		int heightMax = fontSize + lineHeight * maxLineNum + yPadTitle;
 
 		//-
-
-		mutex.lock();
 
 		//bbox
 		if (BBoxShowing)
@@ -48,14 +47,14 @@ void ofxTextFlow::draw(ofEventArgs & e) {
 
 			//bbox
 			rectBB = ofRectangle(position.x, position.y, BBoxWidth, heightMax);
-			//rectBB.x -= margin;
-			//rectBB.y -= margin;
-			//rectBB.height += 2 * margin;
-			//rectBB.width += 2 * margin;
+			rectBB.x -= margin;
+			rectBB.y -= margin;
+			rectBB.height += 2 * margin;
+			rectBB.width += 2 * margin;
 
 			//to compensate pos after margin
 			ofPushMatrix();
-			//ofTranslate(margin, margin);
+			ofTranslate(margin, margin);
 
 			//rounded
 			if (bRounded)
@@ -66,39 +65,48 @@ void ofxTextFlow::draw(ofEventArgs & e) {
 			{
 				ofDrawRectangle(rectBB);
 			}
-
-			ofPopMatrix();
 		}
 
 		//print title
 		ofSetColor(textColor);
 		ofTranslate(position.x, position.y + fontSize);
-		ofDrawBitmapString(title, 0, 0);
 
-		//pos
-		//ofVec2f pos(2, ofGetHeight() + lineHeight + fontSize);
-				
+		string str = title;
+		if (showFPS)
+		{
+			str += "\t\t";
+			str += ofToString(ofGetFrameRate(), 0);
+			str += " FPS";
+		}
+		if (font.isLoaded()) {
+			font.drawString(str, 0, 0);
+		}
+		else
+		{
+			ofDrawBitmapString(str, 0, 0);
+		}
+
 		ofTranslate(0, yPadTitle);
 
-		//ofVec2f pos;
-		//pos.x = position.x;
-		//pos.y = position.y + fontSize + lineHeight;//pad one line below title 
-		//reverse mode. goes to bottom
-		//pos.y = position.y + fontSize + lineHeight * maxLineNum;
-
-		//ofPushMatrix();
-		//ofTranslate(pos);
-		//ofTranslate(0, -heightTotal);
-		
 		//print lines
 		for (auto &l : lines) {
-			ofDrawBitmapString(l, 0, 0);
+			if (font.isLoaded()) {
+				font.drawString(l, 0, 0);
+			}
+			else
+			{
+				ofDrawBitmapString(l, 0, 0);
+			}
 			ofTranslate(0, lineHeight);
 		}
 
-
 		mutex.unlock();
 
+		if (BBoxShowing)
+		{
+			ofPopMatrix();
+		}
+		
 		ofPopMatrix();
 		ofPopStyle();
 	}
@@ -121,8 +129,6 @@ void ofxTextFlow::addText(string txt) {
 	singleton->mutex.unlock();
 
 }
-
-///-
 
 void ofxTextFlow::clear() {
 	singletonGenerate();
@@ -197,10 +203,7 @@ void ofxTextFlow::loadFont(string _path, float _size) {
 	singleton->font.load(_path, _size);
 }
 
-//-
-
 //layout
-
 void ofxTextFlow::setPosition(float _x, float _y) {
 	singletonGenerate();
 	singleton->position = glm::vec2(_x, _y);

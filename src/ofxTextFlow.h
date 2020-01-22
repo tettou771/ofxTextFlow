@@ -2,7 +2,9 @@
 #include "ofMain.h"
 
 class ofxTextFlow {
+
 public:
+	
 	ofxTextFlow();
 	~ofxTextFlow();
 
@@ -10,38 +12,34 @@ public:
 	void draw(ofEventArgs &e);
 
 	static void setTitle(string title);
-
 	static void addText(string txt);
 	static void clear();
-
-	static void toggleShowing();
-	static void setShowing(bool _showing=true);
-	static void setShowingBBox(bool _showing=true);
-
-	static void loadFont(string _path, float _size); 
 	
+	static void toggleShowing();
+	static void setShowing(bool _showing = true);
+	static void setShowingBBox(bool _showing = true);
+
+	static void loadFont(string _path, float _size);
 	static ofColor getTextColor();
 	static void setTextColor(ofColor _color);
 	static void setBackgroundColor(ofColor _color);
 	static ofColor getBackgroundColor();
-
-	static void setMaxLineNum(int _maxLineNum);
 	static bool getShowing();
 	static int getMaxLineNum();
 
 	static void setPosition(glm::vec2 position);
 	static void setPosition(float _x, float _y);
-
-	static void setTabbed(bool b, int num = 1); 
+	static void setMaxLineNum(int _maxLineNum);
+	static void setTabbed(bool b, int num = 1);
 	static void setFloatResolution(int res = 2);
 	static void setMarginBorders(int _margin);
 	static void setRounded(bool b, float size = 10.0f);
-	static void setShowFPS(bool _showing);
-
 	static void setBBoxWidth(int _w);
 	static void setLineHeight(float h = 14);
+	static void setShowFPS(bool _showing);
 
 private:
+
 	static ofxTextFlow *singleton;
 	static void singletonGenerate();
 	ofMutex mutex;
@@ -55,11 +53,6 @@ private:
 	bool showing;
 	bool BBoxShowing;
 
-	ofColor textColor, bgColor;
-	
-	ofTrueTypeFont font;
-
-	//layout
 	bool bTabbed = false;
 	int tabsNum = 1;
 	int fRes = 2;
@@ -67,11 +60,12 @@ private:
 	bool bRounded = false;
 	float roundedSize = 10.0f;
 	bool showFPS;
-	
-	ofRectangle rectBB;
-
 	float lineHeight = 14;
 	float fontSize = 9;
 	int BBoxWidth = 400;
+
+	ofColor textColor, bgColor;
+	ofTrueTypeFont font;
+	ofRectangle rectBB;
 };
 
