@@ -5,7 +5,7 @@
 This (FORK) is an addon for openFrameworks.
 I made it to show debug message on window (not console) easily.
 
-![Alt text](/screenshot.jpg?raw=true "screenshot")
+![Alt text](/screenshot.jpg?raw=true "screenshot.JPG")
 
 Changes by MoebiusSurfing. 
 Original author: Toru Takata.
