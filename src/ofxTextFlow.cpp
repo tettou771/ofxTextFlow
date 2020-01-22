@@ -37,8 +37,6 @@ void ofxTextFlow::draw(ofEventArgs & e) {
 		int yPadTitle = fontSize + lineHeight;//y pad below title
 		int heightMax = fontSize + lineHeight * maxLineNum + yPadTitle;
 
-		//-
-
 		//bbox
 		if (BBoxShowing)
 		{
