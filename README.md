@@ -17,8 +17,8 @@ ofxTextFlow doesn't depend other addons.
 
 ## Tested system
 
-- OSX Mojave + Xcode + of0.10.1
-- Windows 10 + VS2017 +  of0.10.1 .
+Windows 10 / VS2017 / OF 0.11.0
+macOS / High Sierra / Xcode / OF 0.11.0
 
 I think compatible almost all versions, because it's simple addon.
 
